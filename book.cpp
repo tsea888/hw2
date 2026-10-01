@@ -10,7 +10,6 @@ Book::Book(const std::string category, const std::string name, double price, int
     isbn_(isbn),
     author_(author)
 {
-
 }
 
 Book::~Book()
@@ -28,7 +27,7 @@ std::set<std::string> Book::keywords() const{
 std::string Book::displayString() const{
   std::stringstream out;
   out << fixed << setprecision(2);
-  out << name_ << "\n" << "Author: " << author_ << " ISBN: " << isbn_ << "\n" << price_ << " " << qty_ << " left." << endl; 
+  out << name_ << "\n" << "Author: " << author_ << " ISBN: " << isbn_ << "\n" << price_ << " " << qty_ << " left."; 
   return out.str();
 }
 

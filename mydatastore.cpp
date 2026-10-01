@@ -4,21 +4,29 @@
 #include <vector>
 #include <map>
 #include <iostream>
+#include <iomanip>
 
 using namespace std;
 
 MyDataStore::MyDataStore(){}
 
 MyDataStore::~MyDataStore(){
+  set<Product*>::iterator it;
+  for(it = products_.begin(); it != products_.end(); ++it){
+    delete *it;
+  }
 
+  for(int i = 0; i < users_.size(); i++){
+    delete users_[i];
+  }
 }
 
 void MyDataStore::addProduct(Product* p){
-  products_.push_back(p);
+  products_.insert(p);
   set<string> wordsInProduct = p->keywords();
   set<string>::iterator it = wordsInProduct.begin();
   for(it = wordsInProduct.begin(); it != wordsInProduct.end(); ++it){
-    keywords_[*it].insert(*p);
+    keywords_[*it].insert(p);
   }
 }
 
@@ -32,11 +40,11 @@ std::vector<Product*> MyDataStore::search(std::vector<std::string>& terms, int t
     return results;
   }
   vector<string>::iterator it = terms.begin();
-  set<Product*> searchResults = terms[*it];
+  set<Product*> searchResults = keywords_[*it];
 
   for(it = terms.begin()+1; it != terms.end(); ++it){
     //go through each term and check if it's in the keyword map
-    set<Product*> currentKeywordProducts = keywords_[i];
+    set<Product*> currentKeywordProducts = keywords_[*it];
     //recall that in amazon.cpp, type 0 is and, 1 is or
     if(type == 0){
       searchResults = setIntersection(searchResults, currentKeywordProducts);
@@ -46,7 +54,7 @@ std::vector<Product*> MyDataStore::search(std::vector<std::string>& terms, int t
     }
   }
 
-  vector<Product*>::iterator nit = searchResults.begin();
+  set<Product*>::iterator nit = searchResults.begin();
   for(nit = searchResults.begin(); nit != searchResults.end(); ++nit){
     results.push_back(*nit);
   }
@@ -55,17 +63,18 @@ std::vector<Product*> MyDataStore::search(std::vector<std::string>& terms, int t
 }
 
 void MyDataStore::dump(std::ostream& ofile){
+  ofile << fixed << setprecision(2);
   ofile << "<products>" << endl;
   set<Product*>::iterator it = products_.begin();
   for(it = products_.begin(); it != products_.end(); ++it){
-    *it->dump(ofile);
+    (*it)->dump(ofile);
   } 
 
   ofile << "</products>" << endl;
   ofile<< "<users>" << endl;
   vector<User*>::iterator nit = users_.begin();
   for(nit = users_.begin(); nit != users_.end(); ++nit){
-    *nit->dump(ofile);
+    (*nit)->dump(ofile);
   }
   ofile << "</users>" << endl;
 }
@@ -78,9 +87,14 @@ void MyDataStore::executeCommand(string cmd, string username, Product* product){
       user = users_[i];
     }
   }
-  vector<Product*> userCart = carts_[convToLower(username)];
+  vector<Product*>& userCart = carts_[convToLower(username)];
   if(user == NULL){
-    cout << "Invalid username" << endl;
+    if(cmd == "ADD"){
+      cout << "Invalid request" << endl;
+    }
+    else{
+      cout << "Invalid username" << endl;
+    }
   }
   else if(cmd == "ADD"){
     if(product == NULL){
@@ -91,9 +105,8 @@ void MyDataStore::executeCommand(string cmd, string username, Product* product){
     }
   }
   else if(cmd == "VIEWCART"){
-    vector<Product*>::iterator it = userCart.begin();
-    for(it = userCart.begin(); it != userCart.end(); ++it){
-      cout << i << endl;
+    for(int i = 0; i < userCart.size(); i++){
+      cout << "Item:   " << i+1 << endl;
       cout << userCart[i]->displayString() << endl;
     }
   }
@@ -101,9 +114,9 @@ void MyDataStore::executeCommand(string cmd, string username, Product* product){
     vector<Product*> notBought;
     vector<Product*>::iterator it = userCart.begin();
     for(it = userCart.begin(); it != userCart.end(); ++it){
-      if(*it->getQty() != 0 && user->getBalance >= (*it->getPrice())){
-        *it->subtractQty(1);
-        user->deductAmount(*it->getPrice());
+      if((*it)->getQty() != 0 && user->getBalance() >= ((*it)->getPrice())){
+        (*it)->subtractQty(1);
+        user->deductAmount((*it)->getPrice());
       }
       else{
         notBought.push_back(*it);

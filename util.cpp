@@ -17,7 +17,7 @@ std::set<std::string> parseStringToWords(string rawWords)
 {
   set<string> parsedWords;
   string currentWord;
-  for(int i = 0; i < rawWords.size(); i++){
+  for(int i = 0; i <= rawWords.size(); i++){
     char currentChar = rawWords[i];
     bool usableChar = (currentChar >= 'a' && currentChar <= 'z') || (currentChar >= 'A' && currentChar <= 'Z') || (currentChar >= '0' && currentChar <= '9');
 

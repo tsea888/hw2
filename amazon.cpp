@@ -103,11 +103,11 @@ int main(int argc, char* argv[])
 	    /* Add support for other commands here */
             else if(cmd == "ADD" || cmd == "VIEWCART" || cmd == "BUYCART"){
               string username;
-              int hit_result_index;
-              Product* product;
+              int hit_result_index = 0;
+              Product* product = NULL;
               ss >> username;
               ss >>hit_result_index;
-              if(hit_result_index <= hits.size()){
+              if(hit_result_index <= hits.size() && hit_result_index > 0){
                 product = hits[hit_result_index-1];
               }
               ds.executeCommand(cmd, username, product);

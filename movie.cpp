@@ -27,7 +27,7 @@ std::set<std::string> Movie::keywords() const{
 std::string Movie::displayString() const{
   std::stringstream out;
   out << fixed << setprecision(2);
-  out << name_ << "\n" << "Genre: " << genre_ << " Rating: " << rating_ << "\n" << price_ << " " << qty_ << " left." << endl; 
+  out << name_ << "\n" << "Genre: " << genre_ << " Rating: " << rating_ << "\n" << price_ << " " << qty_ << " left."; 
   return out.str();
 }
 

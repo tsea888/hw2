@@ -25,8 +25,8 @@ std::set<std::string> Clothing::keywords() const{
 
 std::string Clothing::displayString() const{
   std::stringstream out;
-  out << fixed << setprecision(2);
-  out << name_ << "\n" << "Size: " << size_ << " Brand: " << brand_ << "\n" << price_ << " " << qty_ << " left." << endl; 
+  out << fixed << setprecision(2); 
+  out << name_ << "\n" << "Size: " << size_ << " Brand: " << brand_ << "\n" << price_ << " " << qty_ << " left.";
   return out.str();
 }
 
